@@ -1,13 +1,12 @@
-const { OpenAI } = require('openai');
-// Note: The @vercel/ai SDK is primarily for streaming responses in frontend applications
-// For backend Node.js applications, the official OpenAI SDK is often more appropriate
 
-// Initialize OpenAI client
+const { OpenAI } = require('openai');
+
+// Initializing OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-async function generateActivities(location, weatherData, getAllActivities = false) {
+async function generateActivities(location, weatherInfo, getAllActivities = false) {
   try {
     let prompt;
     
@@ -15,12 +14,14 @@ async function generateActivities(location, weatherData, getAllActivities = fals
       prompt = `Generate 10 fun activities for someone who is bored in ${location}. Include indoor and outdoor activities. 
       Format the response as a JSON array of objects, each with "name", "description", and "type" (indoor/outdoor) properties.`;
     } else {
-      const weatherCondition = weatherData.current.condition.text;
-      const temperature = weatherData.current.temp_c;
+      const { condition, temperature, isDay } = weatherInfo;
+      const timeOfDay = isDay ? 'daytime' : 'nighttime';
       
-      prompt = `Generate 5 fun activities for someone who is bored in ${location} during ${weatherCondition} weather with a temperature of ${temperature}°C.
+      prompt = `Generate 5 fun activities for someone who is bored in ${location} during ${condition} weather with a temperature of ${temperature}°C during ${timeOfDay}.
       Format the response as a JSON array of objects, each with "name", "description", "type" (indoor/outdoor), and "weatherCondition" properties.`;
     }
+    
+    console.log('Sending prompt to OpenAI:', prompt);
     
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -31,6 +32,8 @@ async function generateActivities(location, weatherData, getAllActivities = fals
     
     // Get the response content
     const content = response.choices[0].message.content;
+    
+    console.log('Received response from OpenAI:', content.substring(0, 100) + '...');
     
     // Parse the JSON response
     try {

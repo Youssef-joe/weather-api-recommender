@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 
 async function getWeatherData(location) {
   try {
-    const apiKey = process.env.OPEN_AI_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     const url = `https://api.opengeo.io/weather?location=${encodeURIComponent(location)}&apiKey=${apiKey}`;
     
     const response = await fetch(url);

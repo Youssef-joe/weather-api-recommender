@@ -1,9 +1,12 @@
 const express = require('express');
+require('dotenv').config();
 const cors = require('cors');
 const activityRoutes = require("./routes/activity.routes.js");
 const weatherRoutes = require('./routes/weather.routes.js');
 const favoriteRoutes = require('./routes/favourite.routes.js');
-require('dotenv').config();
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error('OPENAI_API_KEY environment variable is missing');
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;

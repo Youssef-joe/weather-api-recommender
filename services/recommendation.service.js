@@ -4,7 +4,7 @@ const { OpenAI } = require('openai');
 
 // Initialize OpenAI client
 const openai = new OpenAI({
-  apiKey: "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"
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 async function generateActivities(location, weatherData, getAllActivities = false) {
